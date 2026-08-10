@@ -1,0 +1,392 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   DESIGN TOKENS
+   Derived from the QCI seal: navy field, gold ring, light-blue interior.
+   Dark is the default theme. Adding `.light` to <html> switches themes.
+   Never hardcode a hex value in a component — add a token here instead.
+   ========================================================================== */
+
+:root {
+  /* Surfaces */
+  --c-bg: #080d1f;
+  --c-surface: #0e1633;
+  --c-surface-2: #16204a;
+
+  /* Brand */
+  --c-brand: #2a47b0;
+  --c-gold: #e3b23c;
+  --c-gold-strong: #f0c65e;
+  --c-sky: #a8c8f0;
+  /* Lightened from #8a63d2, which only reached 4.06:1 on --c-surface (needs 4.5). */
+  --c-purple: #9a78dc;
+
+  /* Text */
+  --c-fg: #eaf0ff;
+  --c-fg-muted: #9babd4;
+  /* Lightened from #6f80ad, which sat at 4.54:1 on --c-surface — too close to the line. */
+  --c-fg-subtle: #7b8cb8;
+
+  /* Lines */
+  --c-border: #22305f;
+  --c-border-strong: #35468a;
+
+  /* Fixed-meaning colors */
+  --c-on-gold: #10162e;
+  --c-success: #35c77f;
+  --c-danger: #ef4444;
+
+  /* Effects */
+  --glow-gold: 0 0 40px rgb(227 178 60 / 0.18);
+  --glow-purple: 0 0 60px rgb(138 99 210 / 0.16);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+
+  color-scheme: dark;
+}
+
+:root.light {
+  --c-bg: #ffffff;
+  --c-surface: #f5f7fc;
+  --c-surface-2: #e9eef9;
+
+  --c-brand: #1b2a6b;
+  /* Darkened from #a87a16 (3.85:1 on white, 3.59:1 on surface — both failed AA).
+     This token is used as text, as a border, AND as a background under white text
+     in the skip link, so it has to clear 4.5:1 in both directions. */
+  --c-gold: #8a6411;
+  --c-gold-strong: #75540e;
+  --c-sky: #2c5fa8;
+  --c-purple: #6929c4;
+
+  --c-fg: #0b1226;
+  --c-fg-muted: #4a5a80;
+  /* Darkened from #6b7a9c, which failed AA at 4.30:1 on white / 4.01:1 on surface. */
+  --c-fg-subtle: #5c6a8b;
+
+  --c-border: #d3dcef;
+  --c-border-strong: #b3c1de;
+
+  --c-on-gold: #ffffff;
+  --c-success: #12784a;
+  --c-danger: #c62828;
+
+  --glow-gold: 0 0 40px rgb(168 122 22 / 0.12);
+  --glow-purple: 0 0 60px rgb(105 41 196 / 0.1);
+  --shadow-card: 0 1px 2px rgb(11 18 38 / 0.06), 0 8px 24px -8px rgb(11 18 38 / 0.12);
+
+  color-scheme: light;
+}
+
+/* Expose the tokens to Tailwind so `bg-surface`, `text-fg-muted`, etc. work.
+   `inline` is required because these resolve to var() references. */
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+
+  --color-brand: var(--c-brand);
+  --color-gold: var(--c-gold);
+  --color-gold-strong: var(--c-gold-strong);
+  --color-sky: var(--c-sky);
+  --color-purple: var(--c-purple);
+
+  --color-fg: var(--c-fg);
+  --color-fg-muted: var(--c-fg-muted);
+  --color-fg-subtle: var(--c-fg-subtle);
+
+  --color-border: var(--c-border);
+  --color-border-strong: var(--c-border-strong);
+
+  --color-on-gold: var(--c-on-gold);
+  --color-success: var(--c-success);
+  --color-danger: var(--c-danger);
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Type scale */
+  --text-2xs: 0.6875rem;
+
+  /* Breakpoints match the spec's test sizes */
+  --breakpoint-xs: 24rem;
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+* {
+  border-color: var(--c-border);
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Offset anchor targets so the sticky header never covers a heading. */
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--c-bg);
+  color: var(--c-fg);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Digits never change width, so countdowns and stats don't jitter. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Visible focus on every interactive element. Never remove this. */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--c-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--c-gold);
+  color: var(--c-on-gold);
+}
+
+/* Scrollbar, dark-theme aware */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--c-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-border-strong);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-sky);
+}
+
+/* ==========================================================================
+   AMBIENT MOTION
+   The page should feel alive with no user input. Every animation here is
+   transform/opacity only, and every one is switched off under reduced-motion.
+   ========================================================================== */
+
+@keyframes qff-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes qff-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes qff-pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes qff-sweep {
+  from {
+    transform: translate3d(-120%, 0, 0);
+  }
+  to {
+    transform: translate3d(220%, 0, 0);
+  }
+}
+
+@keyframes qff-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes qff-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-marquee {
+  animation: qff-marquee 42s linear infinite;
+}
+.animate-marquee-slow {
+  animation: qff-marquee 70s linear infinite;
+}
+.animate-drift {
+  animation: qff-drift 7s ease-in-out infinite;
+}
+.animate-pulse-ring {
+  animation: qff-pulse-ring 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.animate-sweep {
+  animation: qff-sweep 6s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: qff-spin-slow 34s linear infinite;
+}
+
+/* Pause the marquee when the user hovers, so they can actually read it. */
+.marquee-host:hover .animate-marquee,
+.marquee-host:hover .animate-marquee-slow {
+  animation-play-state: paused;
+}
+
+/* Scroll reveal. Elements start hidden and are revealed by IntersectionObserver
+   adding [data-revealed]. If JS fails, the fallback below still shows them. */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* No-JS safety net: without JS the observer never runs, so show everything. */
+.no-js [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Content must still be fully visible — we remove the motion, not the content.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   REUSABLE PATTERNS
+   ========================================================================== */
+
+/* Faint grid, used behind hero and section breaks. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--c-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--c-border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+/* Gold gradient text for hero emphasis. */
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--c-gold-strong) 0%, var(--c-gold) 45%, var(--c-sky) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hairline top border that fades at both ends. */
+.rule-fade {
+  background: linear-gradient(90deg, transparent, var(--c-border-strong), transparent);
+  height: 1px;
+}
+
+/* Card surface used across tracks, sponsors, team. */
+.card {
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+}
+
+.card-interactive:hover {
+  border-color: var(--c-border-strong);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Gold glow for the primary CTA. Defined here rather than as an arbitrary Tailwind
+   shadow so it derives from --c-gold and stays correct in both themes. */
+.glow-cta {
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--c-gold) 40%, transparent);
+}
+
+.glow-cta:hover {
+  box-shadow: 0 8px 30px -6px color-mix(in srgb, var(--c-gold) 45%, transparent);
+}
+
+/* Screen-reader-only, but focusable (used by the skip link). */
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
