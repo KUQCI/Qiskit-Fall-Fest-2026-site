@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 
+import { BlochCursor } from "@/components/BlochCursor";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { fallFestAssets } from "@/content/assets";
 import { event } from "@/content/event";
 
 import "./globals.css";
@@ -23,12 +25,19 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const metadataDescription =
+  `Join ${event.name}, hosted by the ${event.host} at ${event.university}, ` +
+  "as part of IBM Quantum's annual global Qiskit Fall Fest event series.";
+
 export const metadata: Metadata = {
   title: {
     default: `${event.name} — ${event.hostShort} at ${event.university}`,
     template: `%s — ${event.name}`,
   },
-  description: event.intro,
+  description: metadataDescription,
+  icons: {
+    icon: fallFestAssets.badge.pink.src,
+  },
   keywords: [
     "Qiskit Fall Fest",
     "quantum computing",
@@ -40,9 +49,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: `${event.name} — ${event.university}`,
-    description: event.intro,
+    description: metadataDescription,
     type: "website",
     locale: "en_AE",
+  },
+  twitter: {
+    card: "summary",
+    title: event.name,
+    description: metadataDescription,
   },
 };
 
@@ -50,10 +64,6 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   // Zoom is deliberately left enabled — never set maximumScale or userScalable here.
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#080d1f" },
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-  ],
 };
 
 /**
@@ -64,7 +74,9 @@ const themeScript = `
 (function(){
   try {
     var saved = localStorage.getItem('qff-theme');
-    if (saved === 'light') document.documentElement.classList.add('light');
+    var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    var useLight = saved === 'light' || (saved !== 'dark' && prefersLight);
+    document.documentElement.classList.toggle('light', useLight);
   } catch (e) {}
   document.documentElement.classList.remove('no-js');
 })();
@@ -91,8 +103,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to main content
         </a>
         <SiteHeader />
-        <main id="main">{children}</main>
+        <main id="main" tabIndex={-1}>{children}</main>
         <SiteFooter />
+        <BlochCursor />
       </body>
     </html>
   );

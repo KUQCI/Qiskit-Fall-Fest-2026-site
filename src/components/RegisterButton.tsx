@@ -40,17 +40,20 @@ export function RegisterButton({
   if (!event.registrationUrl) {
     return (
       <span className={cn(base, "cursor-not-allowed border border-border bg-surface-2 text-fg-subtle")}>
-        <span aria-hidden="true" className="relative flex h-2 w-2">
-          <span className="animate-pulse-ring absolute inline-flex h-full w-full rounded-full bg-gold" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-        </span>
+        <span aria-hidden="true" className="inline-flex h-2 w-2 rounded-full bg-gold" />
         Registration opens soon
       </span>
     );
   }
 
   return (
-    <a href={event.registrationUrl} className={cn(base, variants[variant])}>
+    <a
+      href={event.registrationUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-gate="X"
+      className={cn(base, variants[variant])}
+    >
       {label}
       <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
     </a>

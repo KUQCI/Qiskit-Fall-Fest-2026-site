@@ -9,30 +9,37 @@
 
 :root {
   /* Surfaces */
-  --c-bg: #080d1f;
-  --c-surface: #0e1633;
-  --c-surface-2: #16204a;
+  --c-bg: #070a18;
+  --c-surface: #10152c;
+  --c-surface-2: #191f3e;
+  --c-surface-raised: #20274a;
 
   /* Brand */
-  --c-brand: #2a47b0;
-  --c-gold: #e3b23c;
-  --c-gold-strong: #f0c65e;
-  --c-sky: #a8c8f0;
+  --c-brand: #3178ff;
+  --c-brand-strong: #5c91ff;
+  --c-gold: #ffd84d;
+  --c-gold-strong: #ffe681;
+  --c-sky: #bdd5ff;
   /* Lightened from #8a63d2, which only reached 4.06:1 on --c-surface (needs 4.5). */
-  --c-purple: #9a78dc;
+  --c-purple: #ae8aff;
+  --c-pink: #ff8fc7;
+  --c-lavender: #d7c7ff;
 
   /* Text */
-  --c-fg: #eaf0ff;
-  --c-fg-muted: #9babd4;
+  --c-fg: #f5f7ff;
+  --c-fg-muted: #b5c0df;
   /* Lightened from #6f80ad, which sat at 4.54:1 on --c-surface — too close to the line. */
-  --c-fg-subtle: #7b8cb8;
+  --c-fg-subtle: #8c99bf;
 
   /* Lines */
-  --c-border: #22305f;
-  --c-border-strong: #35468a;
+  --c-border: #2b3358;
+  --c-border-strong: #4b5b92;
 
   /* Fixed-meaning colors */
-  --c-on-gold: #10162e;
+  --c-on-gold: #111426;
+  --c-on-pink: #241020;
+  --c-logo-plate: #ffffff;
+  --c-logo-ink: #10142a;
   --c-success: #35c77f;
   --c-danger: #ef4444;
 
@@ -45,28 +52,35 @@
 }
 
 :root.light {
-  --c-bg: #ffffff;
-  --c-surface: #f5f7fc;
-  --c-surface-2: #e9eef9;
+  --c-bg: #fbfbfe;
+  --c-surface: #f2f4fb;
+  --c-surface-2: #e8ecf8;
+  --c-surface-raised: #ffffff;
 
-  --c-brand: #1b2a6b;
+  --c-brand: #164ab5;
+  --c-brand-strong: #0d3693;
   /* Darkened from #a87a16 (3.85:1 on white, 3.59:1 on surface — both failed AA).
      This token is used as text, as a border, AND as a background under white text
      in the skip link, so it has to clear 4.5:1 in both directions. */
-  --c-gold: #8a6411;
-  --c-gold-strong: #75540e;
-  --c-sky: #2c5fa8;
-  --c-purple: #6929c4;
+  --c-gold: #745600;
+  --c-gold-strong: #5f4500;
+  --c-sky: #24579f;
+  --c-purple: #6932b6;
+  --c-pink: #a52168;
+  --c-lavender: #5e4292;
 
-  --c-fg: #0b1226;
-  --c-fg-muted: #4a5a80;
+  --c-fg: #10142a;
+  --c-fg-muted: #485575;
   /* Darkened from #6b7a9c, which failed AA at 4.30:1 on white / 4.01:1 on surface. */
-  --c-fg-subtle: #5c6a8b;
+  --c-fg-subtle: #5f6b8a;
 
-  --c-border: #d3dcef;
-  --c-border-strong: #b3c1de;
+  --c-border: #d7dcef;
+  --c-border-strong: #7783a6;
 
   --c-on-gold: #ffffff;
+  --c-on-pink: #ffffff;
+  --c-logo-plate: #ffffff;
+  --c-logo-ink: #10142a;
   --c-success: #12784a;
   --c-danger: #c62828;
 
@@ -83,12 +97,16 @@
   --color-bg: var(--c-bg);
   --color-surface: var(--c-surface);
   --color-surface-2: var(--c-surface-2);
+  --color-surface-raised: var(--c-surface-raised);
 
   --color-brand: var(--c-brand);
+  --color-brand-strong: var(--c-brand-strong);
   --color-gold: var(--c-gold);
   --color-gold-strong: var(--c-gold-strong);
   --color-sky: var(--c-sky);
   --color-purple: var(--c-purple);
+  --color-pink: var(--c-pink);
+  --color-lavender: var(--c-lavender);
 
   --color-fg: var(--c-fg);
   --color-fg-muted: var(--c-fg-muted);
@@ -98,6 +116,8 @@
   --color-border-strong: var(--c-border-strong);
 
   --color-on-gold: var(--c-on-gold);
+  --color-on-pink: var(--c-on-pink);
+  --color-logo-ink: var(--c-logo-ink);
   --color-success: var(--c-success);
   --color-danger: var(--c-danger);
 
@@ -122,7 +142,7 @@
 html {
   scroll-behavior: smooth;
   /* Offset anchor targets so the sticky header never covers a heading. */
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 7rem;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -134,6 +154,15 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+}
+
+main {
+  isolation: isolate;
+}
+
+img,
+svg {
+  max-width: 100%;
 }
 
 h1,
@@ -281,10 +310,10 @@ p {
    adding [data-revealed]. If JS fails, the fallback below still shows them. */
 [data-reveal] {
   opacity: 0;
-  transform: translate3d(0, 20px, 0);
+  transform: translate3d(0, 12px, 0);
   transition:
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
@@ -337,6 +366,41 @@ p {
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
 }
 
+.bg-fest-dots {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--c-purple) 34%, transparent) 1.25px,
+    transparent 1.5px
+  );
+  background-size: 20px 20px;
+}
+
+.editorial-panel {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--c-purple) 13%, var(--c-surface)) 0%,
+      var(--c-surface) 58%
+    ),
+    var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.glass-shell {
+  background: color-mix(in srgb, var(--c-bg) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+}
+
+/* Partner wordmarks need a predictable neutral field in both themes. */
+.logo-plate {
+  background: var(--c-logo-plate);
+  border: 1px solid color-mix(in srgb, var(--c-border-strong) 55%, transparent);
+  border-radius: 14px;
+}
+
 /* Gold gradient text for hero emphasis. */
 .text-gradient-gold {
   background: linear-gradient(135deg, var(--c-gold-strong) 0%, var(--c-gold) 45%, var(--c-sky) 100%);
@@ -364,8 +428,38 @@ p {
 
 .card-interactive:hover {
   border-color: var(--c-border-strong);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card);
+}
+
+/* The custom pointer opts in only after its client-side safety checks pass. */
+@media (pointer: fine) {
+  .qff-cursor-hidden,
+  .qff-cursor-hidden a,
+  .qff-cursor-hidden button,
+  .qff-cursor-hidden summary,
+  .qff-cursor-hidden [role="button"] {
+    cursor: none !important;
+  }
+
+  .qff-cursor-hidden input,
+  .qff-cursor-hidden textarea,
+  .qff-cursor-hidden [contenteditable="true"] {
+    cursor: text !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --c-border: var(--c-border-strong);
+    --c-fg-muted: var(--c-fg);
+    --c-fg-subtle: var(--c-fg-muted);
+  }
+
+  .card,
+  .editorial-panel {
+    box-shadow: none;
+  }
 }
 
 /* Gold glow for the primary CTA. Defined here rather than as an arbitrary Tailwind

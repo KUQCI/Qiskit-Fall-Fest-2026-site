@@ -9,7 +9,9 @@ export function Container({
   className?: string;
 }) {
   return (
-    <div className={cn("mx-auto w-full max-w-6xl px-5 sm:px-8", className)}>{children}</div>
+    <div className={cn("mx-auto w-full max-w-[75rem] px-5 sm:px-8 lg:px-10", className)}>
+      {children}
+    </div>
   );
 }
 
@@ -24,7 +26,7 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("relative py-20 sm:py-28", className)}>
+    <section id={id} className={cn("relative py-18 sm:py-24 lg:py-28", className)}>
       {children}
     </section>
   );
@@ -56,8 +58,12 @@ export function SectionHeading({
   return (
     <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center")}>
       {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-      <Tag className="text-3xl font-semibold sm:text-4xl">{title}</Tag>
-      {lede ? <p className="mt-4 text-base text-fg-muted sm:text-lg">{lede}</p> : null}
+      <Tag className="text-3xl font-semibold sm:text-4xl lg:text-5xl">{title}</Tag>
+      {lede ? (
+        <p className="mt-4 max-w-[68ch] text-base leading-relaxed text-fg-muted sm:text-lg">
+          {lede}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import { MoonIcon, SunIcon } from "@/components/ui/Icons";
 
+const themeChangeEvent = "qff-theme-change";
+
 /**
  * Switches between the dark (default) and light themes by toggling `.light` on
  * <html>, and remembers the choice in localStorage. The inline script in layout.tsx
@@ -16,10 +18,30 @@ export function ThemeToggle({ className }: { className?: string }) {
   useEffect(() => {
     setMounted(true);
     setIsLight(document.documentElement.classList.contains("light"));
+
+    const systemTheme = window.matchMedia("(prefers-color-scheme: light)");
+    const syncFromDocument = () => {
+      setIsLight(document.documentElement.classList.contains("light"));
+    };
+    const onSystemThemeChange = (themeEvent: MediaQueryListEvent) => {
+      try {
+        if (localStorage.getItem("qff-theme")) return;
+      } catch {
+        // If storage is unavailable, following the system theme is still safe.
+      }
+      document.documentElement.classList.toggle("light", themeEvent.matches);
+      setIsLight(themeEvent.matches);
+    };
+    systemTheme.addEventListener("change", onSystemThemeChange);
+    window.addEventListener(themeChangeEvent, syncFromDocument);
+    return () => {
+      systemTheme.removeEventListener("change", onSystemThemeChange);
+      window.removeEventListener(themeChangeEvent, syncFromDocument);
+    };
   }, []);
 
   function toggle() {
-    const next = !isLight;
+    const next = !document.documentElement.classList.contains("light");
     setIsLight(next);
     document.documentElement.classList.toggle("light", next);
     try {
@@ -28,6 +50,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       // Private browsing can block localStorage. The toggle still works for the
       // current page; it just won't be remembered.
     }
+    window.dispatchEvent(new Event(themeChangeEvent));
   }
 
   return (

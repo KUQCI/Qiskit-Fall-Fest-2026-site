@@ -6,14 +6,7 @@ import { ChevronDownIcon } from "@/components/ui/Icons";
 import type { FaqItem } from "@/content/types";
 import { cn } from "@/lib/utils";
 
-/**
- * FAQ list with optional category filtering.
- *
- * Built on native <button> + aria-expanded rather than <details>, so the open/close
- * transition can be animated and the state is fully controllable. Multiple items can
- * be open at once — a visitor scanning for two answers should not have the first one
- * close when they open the second.
- */
+/** Accessible multi-open FAQ with optional category filters. */
 export function FaqAccordion({
   items,
   withFilters = false,
@@ -22,18 +15,21 @@ export function FaqAccordion({
   withFilters?: boolean;
 }) {
   const categories = Array.from(new Set(items.map((item) => item.category)));
+  const firstKey = items[0]?.question;
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [openIndexes, setOpenIndexes] = useState<Set<number>>(new Set([0]));
+  const [openQuestions, setOpenQuestions] = useState<Set<string>>(
+    () => new Set(firstKey ? [firstKey] : []),
+  );
 
   const visible = activeCategory
     ? items.filter((item) => item.category === activeCategory)
     : items;
 
-  function toggle(index: number) {
-    setOpenIndexes((current) => {
+  function toggle(question: string) {
+    setOpenQuestions((current) => {
       const next = new Set(current);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
+      if (next.has(question)) next.delete(question);
+      else next.add(question);
       return next;
     });
   }
@@ -41,7 +37,11 @@ export function FaqAccordion({
   return (
     <div>
       {withFilters && categories.length > 1 ? (
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div
+          className="mb-8 flex flex-wrap gap-2"
+          role="group"
+          aria-label="Filter questions by category"
+        >
           <button
             type="button"
             onClick={() => setActiveCategory(null)}
@@ -75,10 +75,11 @@ export function FaqAccordion({
       ) : null}
 
       <ul className="divide-y divide-border border-y border-border">
-        {visible.map((item, index) => {
-          const isOpen = openIndexes.has(index);
-          const panelId = `faq-panel-${index}`;
-          const buttonId = `faq-button-${index}`;
+        {visible.map((item) => {
+          const sourceIndex = items.findIndex((candidate) => candidate.question === item.question);
+          const isOpen = openQuestions.has(item.question);
+          const panelId = `faq-panel-${sourceIndex}`;
+          const buttonId = `faq-button-${sourceIndex}`;
 
           return (
             <li key={item.question}>
@@ -86,17 +87,15 @@ export function FaqAccordion({
                 <button
                   type="button"
                   id={buttonId}
-                  onClick={() => toggle(index)}
+                  onClick={() => toggle(item.question)}
                   aria-expanded={isOpen}
                   aria-controls={panelId}
-                  className="flex w-full items-center justify-between gap-6 py-5 text-left transition-colors hover:text-gold"
+                  className="flex min-h-14 w-full items-center justify-between gap-6 py-5 text-left transition-colors hover:text-gold"
                 >
-                  <span className="text-base font-medium text-fg sm:text-lg">
-                    {item.question}
-                  </span>
+                  <span className="text-base font-medium text-fg sm:text-lg">{item.question}</span>
                   <ChevronDownIcon
                     className={cn(
-                      "h-5 w-5 shrink-0 text-fg-subtle transition-transform duration-300",
+                      "h-5 w-5 shrink-0 text-fg-subtle transition-transform duration-200",
                       isOpen && "rotate-180 text-gold",
                     )}
                   />
@@ -109,9 +108,7 @@ export function FaqAccordion({
                 hidden={!isOpen}
                 className="pb-6 pr-10"
               >
-                <p className="text-sm leading-relaxed text-fg-muted sm:text-base">
-                  {item.answer}
-                </p>
+                <p className="text-sm leading-relaxed text-fg-muted sm:text-base">{item.answer}</p>
               </div>
             </li>
           );

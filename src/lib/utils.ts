@@ -1,10 +1,13 @@
+import type { Status } from "@/content/types";
+
 /** Join class names, dropping falsy values. */
 export function cn(...classes: Array<string | false | null | undefined>): string {
   return classes.filter(Boolean).join(" ");
 }
 
 /** Turn a status into the label shown on its badge, or null if no badge is needed. */
-export function statusLabel(status: "confirmed" | "tentative" | "tba"): string | null {
+export function statusLabel(status: Status): string | null {
+  if (status === "planning") return "Planning phase";
   if (status === "tentative") return "Tentative";
   if (status === "tba") return "To be announced";
   return null;

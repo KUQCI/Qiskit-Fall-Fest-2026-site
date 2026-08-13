@@ -1,51 +1,58 @@
 import type { Phase } from "./types";
 
-/**
- * The three phases of the Fall Fest.
- *
- * `dateRange` is free text on purpose — it reads fine as "Late October 2026" now and
- * as "26 October 2026" once the dates are locked, with no code change needed.
- */
+export const formatSectionCopy = {
+  compact: {
+    eyebrow: "How it works",
+    title: "Three phases, two weeks of building",
+    lede:
+      "The Fall Fest begins with an opening session, followed by a two-week challenge period, and concludes with closing showcases where participants present their work and winners are announced.",
+  },
+  detailed: {
+    eyebrow: "How it works",
+    title: "Three phases, from kickoff to showcase",
+    lede:
+      "The Fall Fest begins with an opening session, followed by a two-week challenge period, and concludes with closing showcases where participants present their work and winners are announced.",
+  },
+} as const;
+
+export const schedulePageContent = {
+  eyebrow: "How it works",
+  title: "What happens, and when",
+  lede:
+    "The Fall Fest runs across three phases: an opening session, a two-week challenge period, and closing showcases.",
+  countdownLabel: "Fall Fest begins",
+  metadataDescription:
+    "How Qiskit Fall Fest 2026 works: an opening session on 19 October, a two-week challenge period, and closing showcases with dates to be announced.",
+} as const;
+
 export const phases: Phase[] = [
   {
     slug: "opening",
     label: "Phase 01",
     title: "Opening Day",
-    dateRange: "Late October 2026",
+    dateRange: "19 October 2026 · 6:00 PM",
     summary:
-      "A hybrid opening session that introduces the Fest, walks through every track, and sets expectations for the two weeks that follow. Student clubs and organisations from across the UAE are invited to set up in the KU spine for the day.",
+      "A hybrid kickoff session at Khalifa University, also available online internationally. Participants will be introduced to the Fall Fest, the challenge tracks, and what to expect during the two weeks ahead.",
     status: "tentative",
     sessions: [
       {
         title: "Welcome & Fall Fest Briefing",
-        time: "Morning",
         description:
-          "What the Fall Fest is, how IBM's global Fall Fest programme works, and how the two weeks are structured.",
+          "An introduction to the Qiskit Fall Fest, the event structure, and the two-week challenge period.",
         format: "hybrid",
         status: "tentative",
       },
       {
         title: "Track Introductions",
-        time: "Midday",
         description:
-          "Each track lead presents their challenge, the level assumed, and what a strong submission looks like.",
+          "An overview of the different challenge tracks and the areas participants will be able to explore.",
         format: "hybrid",
         status: "tentative",
       },
       {
-        title: "Club & Organisation Showcase",
-        time: "Afternoon",
+        title: "Keynote Speaker Sessions",
         description:
-          "Student clubs and organisations from universities across the UAE set up in the spine to meet participants and each other.",
-        format: "in-person",
-        status: "tentative",
-      },
-      {
-        title: "Team Formation",
-        time: "Late afternoon",
-        description:
-          "Find teammates. Coming alone is fine — most people do, and this session exists for exactly that.",
-        format: "hybrid",
+          "Guest speakers will share perspectives on quantum computing, its applications, and the wider ecosystem. Speaker details will be announced as they are confirmed.",
         status: "tentative",
       },
     ],
@@ -53,41 +60,28 @@ export const phases: Phase[] = [
   {
     slug: "hacking",
     label: "Phase 02",
-    title: "Two Weeks of Building",
+    title: "Challenge Period",
     dateRange: "Approximately two weeks",
     summary:
-      "The core of the Fest. Every track runs its own workshops and mentorship while teams build. Depending on the track, you will pass through proposal reviews, technical milestones, or coding qualifiers before the finals.",
+      "Participants work on their track challenges over two weeks, with workshops, technical sessions, mentorship, and other guidance from organizers and track partners. Some tracks may include intermediate submissions or shortlisting ahead of the closing showcase.",
     status: "tentative",
     sessions: [
       {
-        title: "Track Workshops",
-        time: "Throughout",
+        title: "Challenge Work",
         description:
-          "Hands-on sessions run per track, from Qiskit fundamentals to track-specific methods. Recorded for online participants.",
-        format: "hybrid",
+          "Participants develop their projects and work toward the requirements of their chosen track.",
         status: "tentative",
       },
       {
-        title: "Mentor Office Hours",
-        time: "Throughout",
+        title: "Workshops & Guidance",
         description:
-          "Scheduled time with mentors from QCI, KU faculty, and partner organisations. Bring a broken circuit.",
-        format: "hybrid",
+          "Tracks may include workshops, technical sessions, mentorship, and other support throughout the challenge period.",
         status: "tentative",
       },
       {
-        title: "Milestone Check-ins",
-        time: "Mid-period",
+        title: "Intermediate Submissions",
         description:
-          "Proposal reviews for pitch-style tracks, and coding qualifiers for challenge tracks, used to shortlist finalists.",
-        format: "hybrid",
-        status: "tentative",
-      },
-      {
-        title: "Final Submissions",
-        time: "End of period",
-        description: "Code, documentation, and a short write-up or recorded demo per track.",
-        format: "online",
+          "Some tracks may include an intermediate submission or shortlisting stage before the closing showcase.",
         status: "tentative",
       },
     ],
@@ -96,41 +90,45 @@ export const phases: Phase[] = [
     slug: "closing",
     label: "Phase 03",
     title: "Closing Showcase",
-    dateRange: "20 November 2026",
+    dateRange: "Date(s) to be announced",
     summary:
-      "The festival itself. Finalists present their work, industry partners run networking booths, and the Fest closes with the awards ceremony.",
+      "The challenge period concludes with project showcases, coding competitions, industry showcase and networking, and final track activities. Participants present their work, compete in challenges, and come together for the announcement of track winners.",
     status: "tentative",
     sessions: [
       {
-        title: "Finalist Presentations",
-        time: "Morning",
+        title: "Project Showcases",
         description:
-          "Shortlisted teams present to a judging panel, in the format their track calls for — a pitch, a demo, or a technical defence.",
-        format: "hybrid",
+          "Participants present and demo their completed projects in the format appropriate to their track.",
         status: "tentative",
       },
       {
-        title: "Industry Networking Booths",
-        time: "Throughout",
+        title: "Coding Competitions",
         description:
-          "Partner organisations set up alongside the showcase, open to every participant, not only finalists.",
-        format: "in-person",
+          "Participants put their skills to the test through live coding challenges and competitions.",
         status: "tentative",
       },
       {
-        title: "Keynote",
-        time: "Afternoon",
-        description: "Speaker to be announced.",
-        format: "hybrid",
-        status: "tba",
+        title: "Industry Showcase and Networking",
+        description:
+          "Participants connect with industry partners, researchers, and members of the wider quantum community while exploring projects, ideas, and opportunities across the ecosystem.",
+        status: "tentative",
       },
       {
-        title: "Awards & Closing",
-        time: "Evening",
-        description: "Track winners, prizes, and closing remarks.",
-        format: "hybrid",
+        title: "Winner Announcements",
+        description:
+          "Track and competition winners are announced as the Fall Fest comes to a close.",
         status: "tentative",
       },
     ],
   },
 ];
+
+export const homePhases: Phase[] = phases.map(({ slug, label, title, dateRange, summary, status }) => ({
+  slug,
+  label,
+  title,
+  dateRange,
+  summary,
+  status,
+  sessions: [],
+}));

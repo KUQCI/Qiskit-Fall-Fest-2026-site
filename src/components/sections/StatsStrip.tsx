@@ -4,12 +4,12 @@ import { event } from "@/content/event";
 
 export function StatsStrip() {
   return (
-    <Container className="py-14 sm:py-16">
-      <dl className="grid grid-cols-2 gap-x-6 gap-y-10 sm:gap-8 lg:grid-cols-4">
+    <Container className="py-12 sm:py-16">
+      <dl className="grid gap-4 sm:grid-cols-3">
         {event.stats.map((stat, index) => (
           <Reveal key={stat.label} delay={index * 60}>
-            <div className="border-l-2 border-gold/30 pl-4 sm:pl-5">
-              <dd className="tabular font-mono text-3xl font-semibold text-fg sm:text-5xl">
+            <div className="card h-full border-l-2 border-l-pink/60 p-5 sm:p-6">
+              <dd className="tabular font-mono text-3xl font-semibold text-fg sm:text-4xl">
                 {stat.value}
               </dd>
               <dt className="mt-2 text-sm font-medium text-fg sm:text-base">{stat.label}</dt>

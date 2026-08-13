@@ -22,6 +22,13 @@ const nextConfig: NextConfig = {
   basePath,
   assetPrefix: basePath || undefined,
 
+  // Public-folder asset paths are assembled in content data as well as components.
+  // Expose the resolved prefix to both server and client bundles so those URLs work
+  // unchanged in local development, custom domains, and GitHub project pages.
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+  },
+
   images: {
     // next/image's optimizer needs a server; static export has none.
     unoptimized: true,

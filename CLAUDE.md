@@ -1,92 +1,100 @@
 # CLAUDE.md — Qiskit Fall Fest 2026 site
 
-Website for the Qiskit Fall Fest 2026, hosted by the Quantum Computing Initiative (QCI)
-at Khalifa University. First Fall Fest in the GCC. IBM approval received 2 Aug 2026.
+Website for Qiskit Fall Fest 2026, organized by the Quantum Computing Initiative and
+Club at Khalifa University as part of IBM Quantum’s annual global event series.
 
-## Hard dates
+## Confirmed timing
 
-- **20 Nov 2026** — closing showcase (the countdown target)
-- **5 Oct 2026** — team's own deadline for the site being live
+- **19 October 2026 at 6:00 PM UAE time (UTC+04:00)** — opening session and countdown target
+- **Closing showcase date(s): to be announced**
+- **5 October 2026** — team target for the site to be live
+
+Never restore a previous unconfirmed closing date or regional-superlative claim.
 
 ## Stack
 
-Next.js 15 (App Router) + Tailwind v4, **static export** (`output: "export"`).
-Dev server runs on port 4321. No backend, no CMS, no database.
+Next.js 15 (App Router), React 19, TypeScript, and Tailwind v4 with a static export
+(`output: "export"`). The development server runs on port 4321. There is no backend,
+CMS, or database.
 
-Tailwind and `@tailwindcss/postcss` are **pinned to the same exact version**. Caret
-ranges let `@tailwindcss/oxide` drift ahead of the plugin and the build dies with
-`Missing field 'negated' on ScannerOptions.sources`. Keep them locked together.
+Tailwind and `@tailwindcss/postcss` are pinned to the same exact version. Do not loosen
+the versions: incompatible `@tailwindcss/oxide` versions can break the scanner.
 
-## The one architectural rule
+## Content architecture
 
-**Components never contain event data. Content lives in `src/content/`.**
+**Components do not own event data. Content lives in `src/content/`.**
 
-A non-frontend member of the team has to be able to change a date, add a sponsor, or
-edit a track without opening a component. If you find yourself putting a date, a name,
-or a track description in a `.tsx` file under `src/components/`, it belongs in
-`src/content/` instead.
+Dates, names, public descriptions, page headings, partner details, links, and CTA copy
+must be editable without opening a component. Shared components consume shared content
+exports. See `src/content/README.md` for the file map.
 
-## Content honesty rules
+## Content honesty
 
-These are not stylistic — they protect the team's relationships with real companies.
+- Never list a sponsor, speaker, department, or partner that has not agreed in writing.
+- Use `confirmed`, `planning`, `tentative`, and `tba` accurately.
+- The six tracks are in the **Planning phase**. Do not publish difficulty, format,
+  prerequisites, algorithms, datasets, judging criteria, or partner details yet.
+- Do not invent attendance numbers, eligibility rules, team rules, workloads, closing
+  dates, speaker formats, or selection processes.
+- Keep the empty `speakers` array until people agree to be announced.
+- Where a format or session time is unknown, omit the optional field.
 
-- **Never list a sponsor that has not agreed in writing.** Naming an organisation that
-  is only "in conversation" is a public claim they have not consented to. Prospects
-  (ADNOC, TII, Algorithmiq, BlueQubit, etc.) stay out of `sponsors.ts`.
-- Use the `status` field (`confirmed` / `tentative` / `tba`) rather than inventing
-  detail or deleting a section. `tba` renders "Details coming soon".
-- Attendance numbers are **targets**, and must be labelled as such. The 5,000 figure is
-  a goal, not an achieved number.
-- Do not invent speakers. An empty `speakers` array renders an honest "being confirmed"
-  state by design.
-- Team role titles in `team.ts` were drafted from planning chats and are marked
-  `TODO(team)` — confirm with each person before publishing.
+## Public links and contact
+
+- QCI: `https://qcinit.tech/`
+- Contact: `100066617@ku.ac.ae`
+- LinkedIn: `https://www.linkedin.com/company/ku-qci/`
+- Instagram: `https://www.instagram.com/ku.qci/?hl=en`
+- GitHub: `https://github.com/KUQCI`
+- WhatsApp: `https://chat.whatsapp.com/Cc4OqqKTKbnLaBDJuqCQkG`
+
+These values are canonical in `src/content/event.ts`; components should not duplicate them.
+
+## Static assets and GitHub Pages
+
+GitHub Pages may serve the site under a repository base path. Do not use a bare public
+URL such as `/fall-fest-assets/image.png`. Use `fallFestAssets` or `withBasePath` from
+`src/content/assets.ts`; `next.config.ts` exposes the resolved base path as
+`NEXT_PUBLIC_BASE_PATH` during the build.
+
+Use web-safe event-photo derivatives in pages while preserving the supplied originals:
+
+- `hackathon.jpg` (original: `hackathon image.CR2`)
+- `bootcamp-web.jpg` (original: `Bootcamp.JPG`)
+- `ibm-quantum-wordmark.png` for the cropped partner wordmark
 
 ## Design system
 
-Tokens in `src/app/globals.css`. **Never hardcode a colour in a component** — a
-hardcoded value silently goes stale when a token changes and does not adapt to the
-light theme. Both already happened once; see `docs/UI-REVIEW.md` Pillar 3.
+Tokens live in `src/app/globals.css`. Never hardcode a color in a component. Use
+`color-mix(in srgb, var(--c-token) N%, transparent)` for translucent values.
 
-Use `color-mix(in srgb, var(--c-token) N%, transparent)` for translucent values.
+Both themes must have zero WCAG AA contrast failures. Maintain visible keyboard focus,
+44×44 px mobile targets, meaningful alternative text, scalable type, and information
+that does not rely on color alone.
 
-- Palette: navy + gold from the QCI seal, Qiskit purple as co-brand accent
-- Type: IBM Plex Sans + IBM Plex Mono (mono for eyebrows, countdown, track codes)
-- Dark is default; `.light` on `<html>` switches themes
+## Motion and custom pointer
 
-**Both themes must stay at 0 WCAG AA contrast failures.** If you change a colour token,
-re-check contrast against both `--c-bg` and `--c-surface`.
+Motion may use `transform` and `opacity`, and must switch off under
+`prefers-reduced-motion` with content remaining visible. The custom Bloch pointer must
+also respect reduced motion, fine-pointer capability, keyboard use, and mobile/touch.
+Never hide the native cursor unless the replacement is active and safe.
 
-## Motion
-
-The brief requires the page to feel alive with no user input: ambient canvas, live
-countdown, drifting marquees, scroll reveals.
-
-Non-negotiables:
-- `transform`/`opacity` only
-- Everything off under `prefers-reduced-motion`, with content still fully visible
-- **Content must never be permanently invisible.** `Reveal` has a 2s failsafe because
-  `IntersectionObserver` does not fire in background tabs — without it, sections
-  rendered blank. Do not remove it.
-- `QuantumField` paints one frame synchronously in `build()` so a throttled rAF never
-  leaves the hero blank, and uses `ResizeObserver` so a zero-size mount recovers.
+`Reveal` has a failsafe because `IntersectionObserver` may not fire in background tabs.
+Do not make content permanently dependent on an animation callback.
 
 ## Gotchas
 
-- Two display utilities on one element (e.g. `inline-flex` + `hidden sm:inline-flex`)
-  resolve by **stylesheet order, not class order**. Wrap the element instead of passing
-  display classes into a component that sets its own.
-- **Do not run `npm run build` while `npm run dev` is running.** They share the `.next`
-  directory, and a dev recompile landing mid-export crashes the static worker with a
-  confusing `/_not-found` prerender error (`TypeError: e[o] is not a function`). It is
-  not a code bug. Stop the dev server, or `rm -rf .next` and rebuild. Back-to-back
-  builds with dev stopped are reproducibly fine.
+- Two display utilities on one element resolve by stylesheet order, not class order.
+  Wrap the element when responsive visibility conflicts with a component’s own display.
+- Do not run `npm run build` while `npm run dev` is running. Both write `.next`, which
+  can produce misleading static-worker or `/_not-found` failures.
 
-## Verification before calling anything done
+## Verification before completion
 
 ```bash
 npm run build
 ```
 
-Then check in the browser: all 6 routes, dark + light, 375 / 768 / 1280px, no console
-errors, no horizontal scroll. `docs/UI-REVIEW.md` records the audit method.
+Then check all six routes in dark and light themes at 375, 768, and 1280 px. Confirm no
+console errors, horizontal overflow, missing base-path assets, inaccessible controls, or
+legacy event claims. Test keyboard navigation and reduced motion.

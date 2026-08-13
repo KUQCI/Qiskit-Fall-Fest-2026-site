@@ -1,79 +1,64 @@
-# Editing the site content
+# Editing site content
 
-Everything the site says about the event lives in this folder. You should not need to
-open anything in `src/components/` or `src/app/` to keep the site up to date.
+Event facts and page copy live in this folder. Components should render these exports;
+they should not duplicate dates, track descriptions, partner claims, or other event data.
 
-After any edit, run `npm run dev` and check it in the browser before pushing.
+After an edit, run `npm run build` with the development server stopped.
 
-## Which file do I edit?
+## Where things live
 
-| I want to change... | Edit |
+| Change | File |
 |---|---|
-| Dates, venue, the registration link, the countdown, headline numbers | `event.ts` |
-| A track's name, description, level, or format | `tracks.ts` |
-| The opening day / hacking period / closing showcase agenda | `schedule.ts` |
-| Sponsors, partners, sponsorship packages | `sponsors.ts` |
-| Questions and answers | `faq.ts` |
-| Organising team, advisor, speakers | `team.ts` |
-| IBM Quantum and Qiskit learning links | `resources.ts` |
+| Event identity, opening time, venue, registration, contact, socials, home/footer/CTA copy | `event.ts` |
+| Track names, broad descriptions, order, and Tracks page copy | `tracks.ts` |
+| Three phases, sessions, and How It Works page copy | `schedule.ts` |
+| Confirmed partners and the single in-development sponsorship package | `sponsors.ts` |
+| Questions and cautious answers | `faq.ts` |
+| Organizer, advisor, past events, R&D projects, and speakers | `team.ts` |
+| Learning links and shared section copy | `resources.ts` |
+| Public design assets and base-path-safe URLs | `assets.ts` |
 
-## The two things that matter most
+## Registration
 
-### 1. Turning on registration
-
-In `event.ts`, `registrationUrl` starts as `null`. While it is null, every Register
-button on the site shows a disabled "Registration opens soon" state.
-
-Set it to your real link and every button across every page goes live at once:
+`event.registrationUrl` is `null` while registration is unavailable. Set it once to
+activate every registration control that consumes the event configuration:
 
 ```ts
-registrationUrl: "https://forms.gle/your-real-form-link",
+registrationUrl: "https://example.com/registration",
 ```
 
-### 2. The `status` field
+Keep `registrationNote` accurate alongside it.
 
-Tracks, sessions, speakers, and partners each carry a `status`:
+## Statuses and content honesty
 
-- `"confirmed"` — agreed in writing. Renders normally.
-- `"tentative"` — planned but not final. Renders with a "Tentative" badge.
-- `"tba"` — renders "Details coming soon" instead of the description.
+- `confirmed`: agreed and safe to announce.
+- `planning`: the direction exists, while details are still being developed.
+- `tentative`: a proposed programme detail that may change.
+- `tba`: no publishable detail yet.
 
-This exists so the site can go live before everything is locked without saying
-anything untrue. Use it rather than inventing content or deleting the section.
+The six track cards intentionally omit levels, modes, algorithms, judging criteria,
+partners, and prerequisites. Add those fields only after they are confirmed. Preserve
+track slugs and codes because they can be used as anchors or keys even when the public
+name changes.
 
-**Do not list a sponsor until they have agreed in writing.** Naming a company that is
-still in conversation is a public claim they have not consented to.
+Never list a sponsor, speaker, or partner department based only on a conversation.
+Only IBM Quantum and Khalifa University currently appear in the confirmed partner list.
 
-## Adding things
+## Assets
 
-Each file is a plain array. Copy an existing entry, change the values, done.
+Put supplied event media in `public/fall-fest-assets/`, then register it in `assets.ts`.
+Use the exported `src` instead of a bare `/fall-fest-assets/...` URL. The helper adds
+the GitHub Pages base path at build time and URL-encodes filenames containing spaces.
 
-Adding a track — append to the array in `tracks.ts`:
+The original CR2/JPG event photos are preserved. Pages should use the web derivatives
+`hackathon.jpg` and `bootcamp-web.jpg`. Partner displays should use
+`ibm-quantum-wordmark.png` and the appropriate Khalifa University logo.
 
-```ts
-{
-  slug: "quantum-sensing",       // must be unique; becomes the anchor link
-  code: "SENSE-07",
-  title: "Quantum Sensing",
-  summary: "One or two sentences shown on the card.",
-  level: "intermediate",         // beginner | intermediate | advanced | all-levels
-  format: "hybrid",              // in-person | online | hybrid
-  status: "tentative",
-}
-```
+## Adding speakers or projects
 
-Adding a sponsor — append to `partners` in `sponsors.ts`. Put the logo file in
-`public/partners/` and reference it as `/partners/your-logo.svg`. If you leave `logo`
-out, the site renders the name in a styled plate instead, which looks fine.
+The empty `speakers` array creates an honest announcement state. Add a `Speaker` only
+after the person has agreed to be named. R&D cards use verified existing links; omit a
+link rather than guessing a project URL.
 
-Adding a speaker — append to `speakers` in `team.ts`. While that array is empty the
-section shows an honest "speakers being confirmed" message, so there is no rush.
-
-## If something breaks
-
-Your editor will underline the problem in red — usually a missing comma, a missing
-required field, or a `status` value that is not one of the three allowed strings.
-`npm run build` will also fail with the file and line number.
-
-Fields marked optional in `types.ts` (with `?`) can be left out entirely. Omitting a
-field is always safer than filling it with a guess.
+Type definitions in `types.ts` make deliberately unconfirmed fields optional. If
+something is not known, omission is safer than placeholder specificity.

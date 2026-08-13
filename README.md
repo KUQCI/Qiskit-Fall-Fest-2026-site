@@ -1,7 +1,9 @@
 # Qiskit Fall Fest 2026
 
-Website for the Qiskit Fall Fest 2026, hosted by the Quantum Computing Initiative (QCI)
-at Khalifa University — the first Fall Fest in the GCC.
+Website for Qiskit Fall Fest 2026, hosted by the Quantum Computing Initiative and
+Club (QCI) at Khalifa University in Abu Dhabi. The event opens on 19 October 2026
+at 6:00 PM UAE time, followed by an approximately two-week challenge period;
+closing showcase date(s) are still to be announced.
 
 ## Running it
 
@@ -39,10 +41,9 @@ Most common edits:
 
 ### The `status` field
 
-Tracks, sessions, speakers, and partners each carry a `status` of `"confirmed"`,
-`"tentative"`, or `"tba"`. This lets the site go live before everything is locked
-without stating anything untrue — `tba` renders "Details coming soon" instead of
-invented detail.
+Tracks, sessions, speakers, and partners carry an explicit content status such as
+`"confirmed"`, `"planning"`, `"tentative"`, or `"tba"`. This lets the site publish
+confirmed facts while clearly labelling work that is still developing.
 
 **Do not list a sponsor until they have agreed in writing.**
 
@@ -66,8 +67,9 @@ use a token so both the dark and light themes stay correct.
 - **Palette** — navy/gold from the QCI seal, with Qiskit purple as a co-brand accent.
   Dark is the default; light is a toggle.
 - **Type** — IBM Plex Sans and IBM Plex Mono.
-- **Motion** — ambient quantum-field canvas, live countdown, drifting marquees, and
-  scroll reveals. All of it is disabled under `prefers-reduced-motion`.
+- **Motion** — a restrained ambient quantum field, live countdown, short scroll
+  reveals, and an optional fine-pointer cursor. Motion is removed under
+  `prefers-reduced-motion` without hiding content.
 
 Both themes pass WCAG AA contrast (verified, 0 failures).
 
@@ -75,8 +77,8 @@ Both themes pass WCAG AA contrast (verified, 0 failures).
 
 Tracked in `src/content/` as `TODO(team)` comments:
 
-- Confirm opening day and hacking period dates
 - Set the registration URL
-- Confirm team role titles with each person before publishing
-- Add the dedicated Fall Fest contact address and social handles
-- Add sponsor logos to `public/partners/` as they are confirmed
+- Confirm track requirements, formats, challenges, and participation rules
+- Confirm the closing showcase date or dates
+- Add speakers and mentors only after they agree to be announced
+- Replace the sponsorship development notice when packages are approved
