@@ -32,7 +32,7 @@ const artwork = {
     imageClass: "object-contain p-2 sm:p-3",
   },
   faq: {
-    src: fallFestAssets.stickers.sticker03.src,
+    src: fallFestAssets.stickers.sticker01.src,
     frameClass: "rotate-[-2deg] bg-sky/10",
     glowClass: "bg-gold/15",
     imageClass: "object-contain p-2 sm:p-3",
