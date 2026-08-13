@@ -17,6 +17,7 @@ export default function FaqPage() {
   return (
     <>
       <PageHeader
+        art="faq"
         eyebrow={faqPageContent.eyebrow}
         title={faqPageContent.title}
         lede={faqPageContent.lede}

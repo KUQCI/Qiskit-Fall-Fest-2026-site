@@ -27,6 +27,10 @@ GitHub Pages, Vercel, Netlify, or KU web hosting by uploading that folder.
 Everything the site says lives in `src/content/`. See
 [`src/content/README.md`](src/content/README.md) for the full guide.
 
+For setup, architecture, assets, design rules, testing, collaboration, and
+deployment instructions, see [`docs/HANDOFF.md`](docs/HANDOFF.md). This is the
+recommended starting point for anyone taking ownership of the website.
+
 Most common edits:
 
 | Task | File |

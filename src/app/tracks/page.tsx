@@ -16,6 +16,7 @@ export default function TracksPage() {
   return (
     <>
       <PageHeader
+        art="tracks"
         eyebrow={tracksPageContent.eyebrow}
         title={tracksPageContent.title}
         lede={tracksPageContent.intro}

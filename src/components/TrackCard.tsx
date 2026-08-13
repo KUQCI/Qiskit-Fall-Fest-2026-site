@@ -14,7 +14,7 @@ export function TrackCard({
   variant?: "preview" | "planning";
 }) {
   const planning = variant === "planning";
-  const badgeLabel = planning ? (statusLabel(track.status) ?? "Confirmed") : "Tentative";
+  const badgeLabel = statusLabel(track.status) ?? "Planning phase";
 
   return (
     <article

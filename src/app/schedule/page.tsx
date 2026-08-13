@@ -17,6 +17,7 @@ export default function SchedulePage() {
   return (
     <>
       <PageHeader
+        art="schedule"
         eyebrow={schedulePageContent.eyebrow}
         title={schedulePageContent.title}
         lede={schedulePageContent.lede}

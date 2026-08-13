@@ -3,8 +3,10 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 
-/** A compact, animated Bloch sphere that previews H, X, and Z gate actions. */
+/** A compact Bloch sphere with optional cursor VFX and H, X, and Z gate previews. */
 type GateName = "H" | "X" | "Z";
+
+const CURSOR_STORAGE_KEY = "kuqci-custom-cursor-enabled";
 
 const STATES = [
   { label: "|0⟩", angle: 0, spin: 0.5, color: "var(--c-gold)" },
@@ -19,12 +21,29 @@ const GATES: Record<GateName, readonly [number, number, number, number]> = {
   Z: [0, 1, 3, 2],
 };
 
-const HIT_SELECTOR = 'a, button, summary, [role="button"], [data-gate]';
 const TEXT_ENTRY_SELECTOR = [
   "textarea",
   '[contenteditable]:not([contenteditable="false"])',
   '[role="textbox"]',
   'input:not([type="button"]):not([type="checkbox"]):not([type="color"]):not([type="file"]):not([type="hidden"]):not([type="image"]):not([type="radio"]):not([type="range"]):not([type="reset"]):not([type="submit"])',
+].join(", ");
+
+const CLICKABLE_SELECTOR = [
+  'a[href]:not([aria-disabled="true"])',
+  'button:not([disabled]):not([aria-disabled="true"])',
+  'summary',
+  '[role="button"]:not([aria-disabled="true"])',
+  '[role="link"]:not([aria-disabled="true"])',
+  'input[type="button"]:not([disabled])',
+  'input[type="checkbox"]:not([disabled])',
+  'input[type="color"]:not([disabled])',
+  'input[type="file"]:not([disabled])',
+  'input[type="image"]:not([disabled])',
+  'input[type="radio"]:not([disabled])',
+  'input[type="range"]:not([disabled])',
+  'input[type="reset"]:not([disabled])',
+  'input[type="submit"]:not([disabled])',
+  'select:not([disabled])',
 ].join(", ");
 
 export type BlochCursorProps = {
@@ -33,7 +52,8 @@ export type BlochCursorProps = {
 };
 
 export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorProps) {
-  const [enabled, setEnabled] = useState(false);
+  const [supported, setSupported] = useState(false);
+  const [vfxEnabled, setVfxEnabled] = useState(true);
   const layer = useRef<HTMLDivElement | null>(null);
   const halo = useRef<HTMLSpanElement | null>(null);
   const sphere = useRef<HTMLSpanElement | null>(null);
@@ -44,21 +64,43 @@ export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorP
   const core = useRef<HTMLSpanElement | null>(null);
   const label = useRef<HTMLSpanElement | null>(null);
 
+  const enabled = supported && vfxEnabled;
+
   // Honor input-device and motion preferences live, not only on initial load.
   useEffect(() => {
-    const finePointer = window.matchMedia("(pointer: fine)");
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setEnabled(finePointer.matches && !reducedMotion.matches);
+    const updateSupport = () =>
+      setSupported(finePointer.matches && !reducedMotion.matches);
 
-    update();
-    finePointer.addEventListener("change", update);
-    reducedMotion.addEventListener("change", update);
+    try {
+      const stored = localStorage.getItem(CURSOR_STORAGE_KEY);
+      setVfxEnabled(stored === null ? true : stored === "true");
+    } catch {
+      // The control still works for this page if storage is unavailable.
+    }
+
+    updateSupport();
+    finePointer.addEventListener("change", updateSupport);
+    reducedMotion.addEventListener("change", updateSupport);
 
     return () => {
-      finePointer.removeEventListener("change", update);
-      reducedMotion.removeEventListener("change", update);
+      finePointer.removeEventListener("change", updateSupport);
+      reducedMotion.removeEventListener("change", updateSupport);
     };
   }, []);
+
+  const toggleVfx = () => {
+    setVfxEnabled((current) => {
+      const next = !current;
+      try {
+        localStorage.setItem(CURSOR_STORAGE_KEY, String(next));
+      } catch {
+        // Persistence is optional; the current-page control still works.
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!enabled) return;
@@ -152,9 +194,14 @@ export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorP
         el.layer.style.opacity = "1";
       }
 
-      const hit = target?.closest(HIT_SELECTOR) ?? null;
-      hover = hit ? 1 : 0;
-      gate = readGate(hit);
+      const gateTarget = target?.closest("[data-gate]") ?? null;
+      const clickableTarget = target?.closest(CLICKABLE_SELECTOR) ?? null;
+
+      // Explicit gate assignments retain their meaning. Every other genuine
+      // interactive control receives the same H-gate preview so the cursor
+      // communicates clickability consistently across the whole site.
+      gate = readGate(gateTarget) ?? (clickableTarget ? "H" : null);
+      hover = gate ? 1 : 0;
     };
 
     const hide = () => {
@@ -165,11 +212,15 @@ export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorP
       setNativeHidden(false);
     };
 
-    const onDown = () => {
+    const onDown = (event: PointerEvent) => {
       if (usingTextCursor) return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest("[data-cursor-vfx-toggle]")) return;
+
       const mapping = gate ? GATES[gate] : null;
-      if (!mapping) return;
-      stateIndex = mapping[stateIndex];
+      stateIndex = mapping
+        ? mapping[stateIndex]
+        : (stateIndex + 1) % STATES.length;
       pulse = 1;
     };
 
@@ -290,8 +341,6 @@ export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorP
     };
   }, [enabled, hideNativeCursor, size]);
 
-  if (!enabled) return null;
-
   const ring: CSSProperties = {
     position: "absolute",
     left: 0,
@@ -312,53 +361,81 @@ export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorP
     willChange: "transform",
   });
 
+  if (!supported) return null;
+
   return (
-    <div
-      ref={layer}
-      aria-hidden="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        pointerEvents: "none",
-        opacity: 0,
-        transition: "opacity 0.18s ease",
-      }}
-    >
-      <span ref={halo} style={{ ...ring, borderColor: "var(--c-gold)", opacity: 0 }} />
-      <span ref={sphere} style={{ ...ring, opacity: 0.5 }} />
-      <span ref={equator} style={{ ...ring, opacity: 0.4 }} />
-      <span ref={meridian} style={{ ...ring, opacity: 0.28 }} />
-      <span
-        ref={vector}
-        style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          width: 1.5,
-          height: size * 0.44,
-          borderRadius: 1,
-          background: "var(--c-gold)",
-          transformOrigin: "50% 100%",
-          willChange: "transform",
-        }}
-      />
-      <span ref={vectorTip} style={{ ...dot(5), background: "var(--c-gold)" }} />
-      <span ref={core} style={{ ...dot(3), background: "var(--c-fg)", opacity: 0.9 }} />
-      <span
-        ref={label}
-        style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          fontFamily: "var(--font-plex-mono), ui-monospace, monospace",
-          fontSize: 11,
-          letterSpacing: "0.1em",
-          whiteSpace: "nowrap",
-          color: "var(--c-gold)",
-          willChange: "transform",
-        }}
-      />
-    </div>
+    <>
+      {enabled ? (
+        <div
+          ref={layer}
+          data-bloch-cursor-layer
+          aria-hidden="true"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            pointerEvents: "none",
+            opacity: 0,
+            transition: "opacity 0.18s ease",
+          }}
+        >
+          <span ref={halo} style={{ ...ring, borderColor: "var(--c-gold)", opacity: 0 }} />
+          <span ref={sphere} style={{ ...ring, opacity: 0.5 }} />
+          <span ref={equator} style={{ ...ring, opacity: 0.4 }} />
+          <span ref={meridian} style={{ ...ring, opacity: 0.28 }} />
+          <span
+            ref={vector}
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: 1.5,
+              height: size * 0.44,
+              borderRadius: 1,
+              background: "var(--c-gold)",
+              transformOrigin: "50% 100%",
+              willChange: "transform",
+            }}
+          />
+          <span ref={vectorTip} style={{ ...dot(5), background: "var(--c-gold)" }} />
+          <span ref={core} style={{ ...dot(3), background: "var(--c-fg)", opacity: 0.9 }} />
+          <span
+            ref={label}
+            data-bloch-cursor-label
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              fontFamily: "var(--font-plex-mono), ui-monospace, monospace",
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              whiteSpace: "nowrap",
+              color: "var(--c-gold)",
+              willChange: "transform",
+            }}
+          />
+        </div>
+      ) : null}
+
+      <button
+        type="button"
+        data-cursor-vfx-toggle
+        onClick={toggleVfx}
+        aria-pressed={vfxEnabled}
+        aria-label={vfxEnabled ? "Turn cursor visual effects off" : "Turn cursor visual effects on"}
+        className="fixed bottom-4 right-4 z-[60] inline-flex min-h-11 items-center gap-2 rounded-full border border-border-strong bg-bg/90 px-3.5 py-2 font-mono text-2xs font-semibold uppercase tracking-[0.12em] text-fg shadow-lg backdrop-blur-md transition-colors hover:border-gold focus-visible:border-gold"
+      >
+        <span
+          aria-hidden="true"
+          className={`h-2.5 w-2.5 rounded-full ${
+            vfxEnabled ? "bg-gold shadow-[0_0_10px_var(--c-gold)]" : "bg-fg-subtle"
+          }`}
+        />
+        <span>Cursor VFX</span>
+        <span className={vfxEnabled ? "text-gold" : "text-fg-subtle"}>
+          {vfxEnabled ? "On" : "Off"}
+        </span>
+      </button>
+    </>
   );
 }

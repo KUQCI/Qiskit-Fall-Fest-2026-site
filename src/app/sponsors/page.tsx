@@ -21,6 +21,7 @@ export default function SponsorsPage() {
   return (
     <>
       <PageHeader
+        art="partners"
         eyebrow={partnersPageContent.eyebrow}
         title={partnersPageContent.title}
         lede={partnersPageContent.lede}

@@ -44,6 +44,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
+        art="about"
         eyebrow={aboutContent.organizersEyebrow}
         title={aboutContent.organizersTitle}
         lede={aboutContent.organizersSubtitle}
