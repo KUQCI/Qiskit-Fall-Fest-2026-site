@@ -53,7 +53,7 @@ export type BlochCursorProps = {
 
 export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorProps) {
   const [supported, setSupported] = useState(false);
-  const [vfxEnabled, setVfxEnabled] = useState(true);
+  const [vfxEnabled, setVfxEnabled] = useState(false);
   const layer = useRef<HTMLDivElement | null>(null);
   const halo = useRef<HTMLSpanElement | null>(null);
   const sphere = useRef<HTMLSpanElement | null>(null);
@@ -75,7 +75,7 @@ export function BlochCursor({ size = 34, hideNativeCursor = true }: BlochCursorP
 
     try {
       const stored = localStorage.getItem(CURSOR_STORAGE_KEY);
-      setVfxEnabled(stored === null ? true : stored === "true");
+      setVfxEnabled(stored === null ? false : stored === "true");
     } catch {
       // The control still works for this page if storage is unavailable.
     }
