@@ -6,7 +6,9 @@ import { useEffect, useRef, useState } from "react";
 /** A compact Bloch sphere with optional cursor VFX and H, X, and Z gate previews. */
 type GateName = "H" | "X" | "Z";
 
-const CURSOR_STORAGE_KEY = "kuqci-custom-cursor-enabled";
+// Version the preference so visitors who received the old opt-out default do
+// not carry a stored `true` value into the new opt-in experience.
+const CURSOR_STORAGE_KEY = "kuqci-custom-cursor-enabled-v2";
 
 const STATES = [
   { label: "|0⟩", angle: 0, spin: 0.5, color: "var(--c-gold)" },
