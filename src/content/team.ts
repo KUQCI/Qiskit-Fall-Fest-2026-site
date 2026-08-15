@@ -2,7 +2,7 @@ import { fallFestAssets } from "./assets";
 import type { PastEvent, ResearchProject, Speaker, TeamMember } from "./types";
 
 export const aboutContent = {
-  organizersEyebrow: "About",
+  organizersEyebrow: "About Us",
   organizersTitle: "About the Organizers",
   organizersSubtitle: "Quantum Computing Initiative and Club",
   organizersDescription:

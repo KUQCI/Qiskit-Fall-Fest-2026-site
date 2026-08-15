@@ -12,7 +12,6 @@ import {
   InstagramIcon,
   LinkedinIcon,
   MailIcon,
-  MapPinIcon,
   MenuIcon,
   WhatsAppIcon,
 } from "@/components/ui/Icons";
@@ -26,7 +25,7 @@ const navLinks = [
   { href: "/tracks/", label: "Tracks" },
   { href: "/schedule/", label: "How It Works" },
   { href: "/sponsors/", label: "Partners" },
-  { href: "/about/", label: "About" },
+  { href: "/about/", label: "About Us" },
   { href: "/faq/", label: "FAQ" },
 ];
 
@@ -165,62 +164,6 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50">
-      <div className="hidden border-b border-border bg-surface/85 backdrop-blur md:block">
-        <Container className="flex min-h-11 items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-4 text-xs text-fg-muted">
-            <a
-              href={`mailto:${event.contactEmail}`}
-              className="inline-flex min-h-11 min-w-0 items-center gap-1.5 transition-colors hover:text-fg"
-            >
-              <MailIcon className="h-4 w-4 shrink-0" />
-              <span className="truncate">{event.contactEmail}</span>
-            </a>
-            <span className="inline-flex min-h-11 items-center gap-1.5">
-              <MapPinIcon className="h-4 w-4" />
-              {event.venue.name}, {event.venue.city}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <a
-              href={socials.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={iconLinkClass}
-              aria-label="QCI on Instagram (opens in a new tab)"
-            >
-              <InstagramIcon className="h-4 w-4" />
-            </a>
-            <a
-              href={socials.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={iconLinkClass}
-              aria-label="QCI on LinkedIn (opens in a new tab)"
-            >
-              <LinkedinIcon className="h-4 w-4" />
-            </a>
-            <a
-              href={socials.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={iconLinkClass}
-              aria-label="QCI on GitHub (opens in a new tab)"
-            >
-              <GithubIcon className="h-4 w-4" />
-            </a>
-            <a
-              href={whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={iconLinkClass}
-              aria-label="Join QCI on WhatsApp (opens in a new tab)"
-            >
-              <WhatsAppIcon className="h-4 w-4" />
-            </a>
-          </div>
-        </Container>
-      </div>
-
       <div
         className={cn(
           "border-b transition-all duration-300",

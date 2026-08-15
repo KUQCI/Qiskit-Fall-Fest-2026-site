@@ -19,7 +19,7 @@ export function Hero() {
 
       <Container className="relative grid min-h-[calc(100svh-6rem)] items-center gap-10 py-12 lg:grid-cols-12 lg:gap-12 lg:py-16">
         <div className="relative z-10 lg:col-span-7">
-          <p className="font-mono text-xs uppercase tracking-[0.22em] text-pink sm:text-sm">
+          <p className="whitespace-pre-line font-mono text-xs uppercase tracking-[0.22em] text-pink sm:text-sm">
             {homeContent.heroOwner}
           </p>
 

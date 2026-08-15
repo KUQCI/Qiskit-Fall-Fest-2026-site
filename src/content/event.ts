@@ -49,7 +49,7 @@ export const event = {
 } as const;
 
 export const homeContent = {
-  heroOwner: "The Quantum Computing Initiative’s",
+  heroOwner: "Khalifa University\nQuantum Computing Initiative's",
   about: {
     eyebrow: "What this is",
     title: "A Qiskit Fall Fest, Built Bigger",
